@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>TON Site Hiddenwiki</title>
+    <link rel="shortcut icon" href="./assets/images/favicon.png">
+    <link rel="stylesheet" href="./assets/css/fonts/linecons/css/linecons.css">
+    <link rel="stylesheet" href="./assets/css/fonts/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./assets/css/bootstrap.css">
+    <link rel="stylesheet" href="./assets/css/xenon-core.css">
+    <link rel="stylesheet" href="./assets/css/xenon-components.css">
+    <link rel="stylesheet" href="./assets/css/xenon-skins.css">
+    <link rel="stylesheet" href="./assets/css/nav.css">
+    <script src="./assets/js/jquery-1.11.1.min.js"></script>
+</head>
+
+<body class="page-body">
+    <div class="page-container">
+        <div class="main-content">
+            <nav class="navbar user-info-navbar" role="navigation">
+            </nav>
+            <!-- Recommended -->
+            <div style="width: 100%;height: 20%;margin-top: 20px; text-align: center;">
+                <img src="./assets/images/bar.png" style="width: 100%;max-width: 400px;">
+            </div>
+
+            <div id= "maindata"></div>
+            <br />
+            <footer class="main-footer sticky footer-type-1">
+                <div class="footer-inner">
+                    <!-- Add your copyright text here -->
+                    <div class="footer-text">
+                        <a href="#"><strong>TON Hiddenwiki</strong></a> build by <a href="https://t.me/hiddenwikis_bot" target="_blank"><strong>Hiddenwiki Bot</strong></a>
+                    </div>
+                    <div class="go-up">
+                        <a href="#" rel="go-top">
+                            <i class="fa-angle-up"></i>
+                        </a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+
+        const mockData = {
+            "Official":{
+                "deepth":0,
+                "title":"Official sites",
+                "data":[
+                    {
+                        "title":"TON Fundation",
+                        "details":"The official Ton fundation team ",
+                        "url":"fundation.ton"
+                    }
+                ]
+            },
+            "Tools_Tonproxy":
+            {
+                            "title":"TON Proxy & TON Site",
+                            "deepth":0,
+                            "data":[
+                                        {
+                                            "title":"Hiddenproxy",
+                                            "details":"First .ton domain URL shorter tool",
+                                            "url":"hiddenproxy.ton"
+                                        },
+                                        {
+                                            "title":"Reverse proxy",
+                                            "details":"A wonderful and working TON proxy cli tools to build your own TON site",
+                                            "url":"github.com/tonutils/reverse-proxy"
+                                        },
+                                        {
+                                            "title":"Tonutils-Proxy",
+                                            "details":"A good GUI TON proxy ",
+                                            "url":"github.com/xssnick/Tonutils-Proxy"
+                                        }
+                                    ],
+            }
+            ,
+            "Tools_hiddenwiki":{
+                        "title":"Site indexer & Hiddenwiki",
+                        "deepth":0,
+                        "data":[
+                                {
+                                    "title":"Hiddenwikis",
+                                    "details":"First .ton Hiddenwiki indexr",
+                                    "url":"hiddenwikis.ton"
+                                }
+                            ]
+            },
+            "Hoisting":{
+                        "title":"Hosting / Web / File / Image",
+                        "deepth":0,
+                        "data":[
+                                        {
+                                            "title":"Ton Storage",
+                                            "details":"Fully decentalized Storage systen of TON netowrk",
+                                            "url":"docs.ton.org/participate/ton-storage/storage-daemon"
+                                        }
+                            ]
+            },
+            "Bitcoin_anony":{
+                        "title":"Bitcoin anonymity",
+                        "deepth":0,
+                        "data":[
+                            ]
+            },
+            "Financial":{
+                        "title":"Financial Services",
+                        "deepth":0,
+                        "data":[
+                            ]
+            },
+            "Commercial":{
+                        "title":"Commercial Services",
+                        "deepth":0,
+                        "data":[
+                            ]
+            },
+            "Chats":{
+                        "title":"Forums / Boards / Chans",
+                        "deepth":0,
+                        "data":[
+                            ]
+            },
+            "Message":{
+                        "title":"Email / Messaging",
+                        "deepth":0,
+                        "data":[
+                            ]
+            } ,
+            "Political":{
+                        "title":"Political Advocacy",
+                        "deepth":0,
+                        "data":[
+                            ]
+            } ,
+            "Audio":{
+                        "title":"Audio – Music / Streams",
+                        "deepth":0,
+                        "data":[
+                            ]
+            } ,
+            "Adult":{
+                        "title":"Adult & Porn",
+                        "deepth":0,
+                        "data":[
+                            ]
+            } ,
+            "Drugs":{
+                        "title":"Drug stores",
+                        "deepth":0,
+                        "data":[
+                            ]
+            },
+        }
+    
+
+        function redirectRouter(path)
+        {
+            if(!path || !(path?.length > 0))
+            {
+                return false;
+            }
+            let adnlCheck = path.split(".adnl");
+            let tonCheck = path.split(".ton");
+            if(
+                (adnlCheck.length == 2 && adnlCheck[1]=='') || 
+                (tonCheck.length == 2 && tonCheck[1]=='')
+            )
+            {
+
+                var deviceAgent =  navigator.userAgent.toLowerCase();
+                var agentID = deviceAgent.match(/(iphone|ipod|ipad|android)/);
+                if(agentID){
+                    // from mobile request . goto "tonsite://"
+                    return "tonsite://"+path
+                }else{
+                    // from PC . goto "http://"
+                    return "http://"+path
+                } 
+            }else{
+                return "http://"+path
+            }
+                
+        }
+
+    
+        function doInit()
+        {
+            let sideTab = document.getElementById("maindata");
+            let sideTabHtml = ""
+    
+            let key0 = Object.keys(mockData)
+            for(let i = 0 ; i < key0.length ; i++)
+            {
+                let md =  mockData[key0[i]];
+                    //The base path .
+                    sideTabHtml +=  
+`
+<h4 class="text-gray"><i class="linecons-tag" style="margin-right: 7px;" id="${key0[i]}"></i>${md.title}</h4>
+    
+`
+                let rowIndexer = 0 ;
+                let rowHtml = "";
+                let subRowHtml = []
+                for(let u = 0 ; u < md.data.length ; u++)
+                {
+                    let subMd = md.data[u]
+                    let subR = `
+                    <div class="col-sm-3">
+                    <div class="xe-widget xe-conversations box2 label-info" onclick="window.open('${redirectRouter(subMd.url)}', '_blank')" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="${redirectRouter(subMd.url)}">
+                        <div class="xe-comment-entry">
+                            <a class="xe-user-img">
+                                <img data-src="./assets/images/logo.png" class="lozad img-circle" width="40">
+                            </a>
+                            <div class="xe-comment">
+                                <a href="#" class="xe-user-name overflowClip_1">
+                                    <strong>${subMd.title}</strong>
+                                </a>
+                                <p class="overflowClip_2">${subMd.details}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+`
+                    subRowHtml.push(
+                        subR
+                    )
+                }
+
+                rowHtml+=`<div class="row">`
+                for(let u = 0 ; u < subRowHtml.length ; u++)
+                {
+                    rowHtml+=subRowHtml[u]   
+                    if(rowIndexer<3)
+                    {
+                        //Do nothing
+                    }else{
+                        if(u+1 == subRowHtml.length)
+                        {
+                            //End . Do nothing
+                        }else
+                        {
+                            rowHtml+=`</div><div class="row">`
+                        }
+                        rowIndexer=0
+                    }
+
+                    rowIndexer++
+                }
+                rowHtml+=`</div>`
+                sideTabHtml+=rowHtml
+        }
+        sideTab.innerHTML = sideTabHtml
+    }
+        doInit()
+    </script>
+
+
+    <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'UA-111463289-1');
+    </script>
+    <script src="./assets/js/bootstrap.min.js"></script>
+    <script src="./assets/js/xenon-api.js"></script>
+    <script src="./assets/js/xenon-toggles.js"></script>
+    <script src="./assets/js/xenon-custom.js"></script>
+    <script src="./assets/js/lozad.js"></script>
+</body>
+
+</html>
